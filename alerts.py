@@ -28,5 +28,5 @@ def send_email_alert(conflicts):
     msg["To"] = "target_email@gmail.com"
 
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.login("your_email@gmail.com", "your_password")
-        server.send_message(msg)
+        server.login("your_email@gmail.com", "your_app_password")
+        server.send_message(msg))

@@ -1,33 +1,37 @@
 import yfinance as yf
 import pandas as pd
 
+def get_industry(ticker):
+    try:
+        return yf.Ticker(ticker).info.get("sector", "Unknown")
+    except:
+        return "Unknown"
+
 def get_returns(tickers):
-    periods = {
-        "3mo": "3mo",
-        "6mo": "6mo",
-        "1y": "1y"
-    }
+    periods = ["3mo", "6mo", "1y"]
+    spy = yf.Ticker("SPY")
 
     results = []
 
-    spy = yf.Ticker("SPY")
-
     for ticker in tickers:
-        stock = yf.Ticker(ticker)
+        try:
+            stock = yf.Ticker(ticker)
+            row = {"ticker": ticker}
 
-        row = {"ticker": ticker}
+            for period in periods:
+                hist = stock.history(period=period)
+                spy_hist = spy.history(period=period)
 
-        for label, period in periods.items():
-            hist = stock.history(period=period)
-            spy_hist = spy.history(period=period)
+                if len(hist) > 0 and len(spy_hist) > 0:
+                    ret = (hist["Close"].iloc[-1] / hist["Close"].iloc[0]) - 1
+                    spy_ret = (spy_hist["Close"].iloc[-1] / spy_hist["Close"].iloc[0]) - 1
 
-            if len(hist) > 0:
-                ret = (hist["Close"][-1] / hist["Close"][0]) - 1
-                spy_ret = (spy_hist["Close"][-1] / spy_hist["Close"][0]) - 1
+                    row[period] = ret
+                    row[f"{period}_vs_spy"] = ret - spy_ret
 
-                row[label] = ret
-                row[f"{label}_vs_spy"] = ret - spy_ret
+            results.append(row)
 
-        results.append(row)
+        except:
+            continue
 
     return pd.DataFrame(results)

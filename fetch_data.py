@@ -15,10 +15,14 @@ def fetch_house_trades():
         "amount": "amount"
     })
 
-    # Party tagging (basic — improve later)
-    democrat_keywords = ["Pelosi", "Schumer", "AOC"]
+    # Basic party tagging (improve later)
+    democrat_names = [
+        "Nancy Pelosi", "Chuck Schumer", "Alexandria Ocasio-Cortez",
+        "Ro Khanna", "Adam Schiff", "Mark Warner"
+    ]
+
     df["party"] = df["name"].apply(
-        lambda x: "Democrat" if any(k in x for k in democrat_keywords) else "Republican"
+        lambda x: "Democrat" if x in democrat_names else "Republican"
     )
 
     return df

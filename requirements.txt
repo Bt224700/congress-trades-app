@@ -3,5 +3,3 @@ pandas
 requests
 yfinance
 plotly
-apscheduler
-python-dotenv
